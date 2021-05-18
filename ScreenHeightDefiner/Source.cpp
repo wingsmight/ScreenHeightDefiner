@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 
+
 typedef int (*ImportFunction)(char*);
+
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 DWORD WINAPI ThreadFunc(void*);
+
 
 const int WINDOW_WIDTH = 500;
 const int WINDOW_HEIGHT = 150;
@@ -13,7 +16,8 @@ const int WINDOW_HEIGHT = 150;
 const int LABEL_ID = 1;
 const int HEIGHT_LABEL_ID = 2;
 
-char info[256];
+
+char screenHeightString[256];
 HWND hwnd;
 HWND heightLabelHwnd;
 
@@ -69,7 +73,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdStr, i
 	DWORD heightLabelStyle = WS_CHILD | WS_VISIBLE | SS_CENTER | SS_CENTERIMAGE;
 	int heightLabelWidth = WINDOW_WIDTH;
 	int heightLabelHeight = WINDOW_HEIGHT;
-	heightLabelHwnd = CreateWindow("static", info,
+	heightLabelHwnd = CreateWindow("static", screenHeightString,
 		heightLabelStyle,
 		0, 0, heightLabelWidth, heightLabelHeight,
 		hwnd, (HMENU)HEIGHT_LABEL_ID, hInstance, NULL);
@@ -116,6 +120,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			hDC = BeginPaint(hWnd, &paintStruct);
 
+			SetWindowText(heightLabelHwnd, screenHeightString);
+
 			EndPaint(hWnd, &paintStruct);
 			break;
 		}
@@ -141,19 +147,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 DWORD WINAPI ThreadFunc(void*)
 {
-	//int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-	//memset(info, 0, sizeof(info));
-	//_itoa_s(screenHeight, info, 10);
-
-	ImportFunction InfoDLL;
 	HINSTANCE hinstLib = LoadLibrary(TEXT("ScreenHeightDefinerDLL.dll"));
-	InfoDLL = (ImportFunction)GetProcAddress(hinstLib, "Information");
-	InfoDLL(info);
-
+	ImportFunction dllFunc = (ImportFunction)GetProcAddress(hinstLib, "GetScreenHeight");
+	dllFunc(screenHeightString);
 	FreeLibrary(hinstLib);
-
-	SetWindowText(heightLabelHwnd, info);
 
 	return EXIT_SUCCESS;
 }
