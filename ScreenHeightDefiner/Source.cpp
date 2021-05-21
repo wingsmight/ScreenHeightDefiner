@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-
+// declare the definition of called dll funcion
 typedef int (*ImportFunction)(char*);
 
 
@@ -13,23 +13,27 @@ void DrawHeightValue(HINSTANCE hInstance);
 void DrawSSE3SupportLabel(HINSTANCE hInstance);
 void DrawSSE3SupporValue(HINSTANCE hInstance);
 
-
+// main window size
 const int WINDOW_WIDTH = 500;
 const int WINDOW_HEIGHT = 300;
 
+// window ids
 const int LABEL_LABEL_ID = 1;
 const int HEIGHT_VALUE_ID = 2;
 const int SSE3_SUPPORT_LABEL_ID = 3;
 const int SSE3_SUPPORT_VALUE_ID = 4;
 
-
+// returned dll values
 char screenHeightString[256];
 char sse3SupportString[10];
+
+// window handles
 HWND hwnd;
 HWND heightValueHwnd;
 HWND sse3SupportValueHwnd;
 
 
+// entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdStr, int showCmd)
 {
 	MSG msg{};
@@ -65,6 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdStr, i
 		return EXIT_FAILURE;
 	}
 
+	// draw labels
 	DrawHeightLabel(hInstance);
 	DrawHeightValue(hInstance);
 
@@ -83,6 +88,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdStr, i
 	return msg.wParam;
 }
 
+// handle received messages
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	HANDLE threadHandle;
@@ -143,6 +149,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return EXIT_SUCCESS;
 }
 
+// execute dlls in new thread
 DWORD WINAPI ThreadFunc(void*)
 {
 	HINSTANCE screenHeightLib = LoadLibrary(TEXT("ScreenHeight.dll"));
@@ -180,6 +187,7 @@ DWORD WINAPI ThreadFunc(void*)
 	return EXIT_SUCCESS;
 }
 
+// draw static windows
 void DrawHeightLabel(HINSTANCE hInstance)
 {
 	DWORD style = WS_CHILD | WS_VISIBLE | SS_CENTER;
