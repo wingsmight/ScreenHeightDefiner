@@ -161,7 +161,7 @@ DWORD WINAPI ThreadFunc(void*)
 		return EXIT_FAILURE;
 	}
 
-	HINSTANCE sse3SupportLib = LoadLibrary(TEXT("SSE3Support.dll"));
+	HINSTANCE sse3SupportLib = LoadLibrary(TEXT("SSE3Status.dll"));
 	if (sse3SupportLib != NULL)
 	{
 		ImportFunction dllFunc = (ImportFunction)GetProcAddress(sse3SupportLib, "GetSSE3Status");
